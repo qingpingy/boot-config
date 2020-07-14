@@ -1,0 +1,150 @@
+app:
+  instance:
+    code: portal
+    profile: dev
+  rest:
+    # profile: dev
+    profiles:
+      datacenter: dev
+  file:
+    upload-path: e:\file\upload
+    template-path: classpath:template
+    images-root-path: d:/images
+  authority:
+    login:
+      allow-retry-times: 3   # 登录失败超过该次数要求输入验证码
+    menu:
+      operate: false # 是否控制菜单按钮权限
+  layout:
+    menu:
+      expand-first: true # 展开第一个菜单
+  mq:
+    enable: false # 暂停使用
+    exchange: bv.data
+    routes:
+      data: bv.datacenter.data
+    queues:
+      data: bv.data.portal
+  task:
+    exchange: "0 0/60 * * * ?"
+  redis:
+    prefix: PORTAL
+    # 过期时间，以秒为单位
+    # expire: 3600
+  error:
+    prefix: P
+  token:
+    access:
+      # 超时时间，以秒为单位
+      expire: 600
+    refresh:
+      expire: 1200
+  ess:
+    host: 127.0.0.1
+    port: 8113
+server:
+  port: 7002
+  session:
+    timeout: 300
+logging:
+  level:
+    root: info
+    com.bestvike: debug
+    org.springframework.security: warn
+  # 默认日志文件名
+  # file: log
+  # 默认日志路径
+  # path: ./log
+  # logback.xml路径，默认为classpath:logback.xml
+  # config: ./logback.xml
+security:
+  sessions: always
+    # redis:
+    # single:
+    #   host: 127.0.0.1
+    #   port: 6379
+    # cluster:
+    #   address: 127.0.0.1:20001,127.0.0.1:20002,127.0.0.1:20003
+    #   timeout: 300000
+    #   maxRedirections: 6
+    # pool:
+    # maxWaitMillis: -1
+    # maxTotal: 1000
+    # maxIdle: 9
+  # minIdle: 100
+spring:
+  application:
+    name: ${app.instance.code}-${app.instance.profile}
+  #  session:
+  #    store-type: none
+  redis:
+    # cluster:
+    #   nodes: 127.0.0.1:20001,127.0.0.1:20002,127.0.0.1:20003
+    host: 127.0.0.1
+    port: 6379
+  http:
+    multipart.max-file-size: 100Mb
+    encoding:
+      force: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  resources:
+    cache-period: 3600000
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    publisher-confirms: true
+datasources:
+  portal:
+    datasource:
+      url: jdbc:oracle:thin:@172.10.11.5:1521/orcl # jdbc:mariadb://127.0.0.1:3306/demo
+      username: demo
+      password: demo
+      driverClassName: oracle.jdbc.OracleDriver # org.mariadb.jdbc.Driver #
+      # 初始化大小，最小，最大
+      initialSize: 6
+      minIdle: 4
+      maxIdle: 15
+      maxActive: 22
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 1 from dual
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+  ess:
+    datasource:
+      url: jdbc:oracle:thin:@127.0.0.1:1521/orcl # jdbc:mariadb://127.0.0.1:3306/demo
+      username: demo
+      password: demo
+      driverClassName: oracle.jdbc.OracleDriver # org.mariadb.jdbc.Driver
+      # 初始化大小，最小，最大
+      initialSize: 6
+      minIdle: 4
+      maxIdle: 15
+      maxActive: 22
+      # 配置获取连接等待超时的时间
+      maxWait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      timeBetweenEvictionRunsMillis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 1 from dual
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+mybatis:
+  dialect: org.apache.ibatis.dialect.OracleDialect # org.apache.ibatis.dialect.MariadbDialect
+  basePackage: com.lxp.ess.dao
+  aliasesPackage: com.lxp.ess.data
+  mapperLocations: classpath*:com/lxp/ess/mapping/*.xml
+  underscoreToCamelCase: true
+
+
